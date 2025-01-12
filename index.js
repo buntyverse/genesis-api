@@ -7,6 +7,15 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
+// Middleware for API key authentication
+app.use((req, res, next) => {
+  const clientApiKey = req.headers["x-client-api-key"];
+  if (!clientApiKey || clientApiKey !== process.env.CLIENT_API_KEY) {
+    return res.status(401).json({ error: "Unauthorized: Invalid API Key" });
+  }
+  next();
+});
+
 // /mint endpoint
 app.post("/mint/:walletAddress", async (req, res) => {
   const { walletAddress } = req.params;
