@@ -1,0 +1,40 @@
+const express = require("express");
+const axios = require("axios");
+require("dotenv").config();
+
+const app = express();
+app.use(express.json());
+
+const PORT = process.env.PORT || 3000;
+
+// /mint endpoint
+app.post("/mint/:walletAddress", async (req, res) => {
+  const { walletAddress } = req.params;
+
+  try {
+    const response = await axios.post(
+      "https://www.crossmint.com/api/2022-06-09/collections/b2f34c67-c1b4-4d15-b9f0-db736b7bf36e/nfts",
+      {
+        templateId: "c9f40d97-32a5-4fdc-b4a2-195b0fdcf9f4",
+        recipient: `base:${walletAddress}`,
+      },
+      {
+        headers: {
+          "x-api-key": process.env.CROSSMINT_API_KEY,
+        },
+      }
+    );
+
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error("Error minting NFT:", error.message);
+    res.status(error.response?.status || 500).json({
+      error: "Failed to mint NFT",
+      details: error.response?.data || error.message,
+    });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
