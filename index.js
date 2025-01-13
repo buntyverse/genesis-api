@@ -1,8 +1,9 @@
 const express = require("express");
 const axios = require("axios");
+const cors = require("cors");
 require("dotenv").config();
 
-const cors = require("cors");
+
 
 const app = express();
 
@@ -48,6 +49,24 @@ app.post("/mint/:walletAddress", async (req, res) => {
       error: "Failed to mint NFT",
       details: error.response?.data || error.message,
     });
+  }
+});
+
+app.get("/bar", async (req, res) => {
+  try {
+    const response = await axios.get(
+      "https://www.crossmint.com/api/2022-06-09/collections/b2f34c67-c1b4-4d15-b9f0-db736b7bf36e/templates/c9f40d97-32a5-4fdc-b4a2-195b0fdcf9f4",
+      {
+        headers: {
+          "x-api-key": process.env.CROSSMINT_API_KEY,
+        },
+      }
+    );
+
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error("Error in /bar:", error.message);
+    res.status(500).json({ error: "Failed to fetch template details" });
   }
 });
 
