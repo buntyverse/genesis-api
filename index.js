@@ -32,7 +32,7 @@ app.post("/mint/:walletAddress", async (req, res) => {
     const response = await axios.post(
       "https://www.crossmint.com/api/2022-06-09/collections/b2f34c67-c1b4-4d15-b9f0-db736b7bf36e/nfts",
       {
-        templateId: "c9f40d97-32a5-4fdc-b4a2-195b0fdcf9f4",
+        templateId: "5ed98848-5e77-4609-bc31-07b10e4b4d79",
         recipient: `base:${walletAddress}`,
       },
       {
