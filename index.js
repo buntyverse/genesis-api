@@ -1,6 +1,9 @@
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
+const { promisify } = require("util");
+const { Redis } = require("@upstash/redis");
+
 require("dotenv").config();
 
 
@@ -12,6 +15,24 @@ app.use(cors());
 
 
 app.use(express.json());
+
+const redis = new Redis({
+  url: 'https://settled-lemur-58224.upstash.io',
+  token: 'AeNwAAIjcDFjOTg4Mjc5YzVjMjM0MjVmOTdlOTBlNDVkZDZlZDMzOXAxMA',
+})
+
+//redis.on("error", (err) => {
+  //console.error("Redis error:", err);
+//});
+
+// Promisify Redis methods for easier usage
+//redis.on("error", (err) => console.error("Redis Client Error:", err));
+//redis.on("connect", () => console.log("Connected to Redis!"));
+
+// Connect to Redis
+//(async () => {
+  //  await redisClient.connect();
+//})();
 
 const PORT = process.env.PORT || 3000;
 
@@ -29,20 +50,21 @@ const mintedWallets = new Set();
 // /mint endpoint
 app.post("/mint/:walletAddress", async (req, res) => {
   const { walletAddress } = req.params;
+  
 
-  if (mintedWallets.has(walletAddress)) {
-    return res
-      .status(400)
-      .json({ error: "This wallet has already minted the NFT." });
+  const isMinted = await redis.get(walletAddress);
+  console.log(isMinted)
+  if (isMinted) {
+      return res.status(400).json({ message: "This wallet has already minted an NFT." });
   }
 
 
   try {
     const response = await axios.post(
-      "https://www.crossmint.com/api/2022-06-09/collections/b2f34c67-c1b4-4d15-b9f0-db736b7bf36e/nfts",
+      "https://www.crossmint.com/api/2022-06-09/collections/126abb71-f84e-44e8-b49e-2972ed3cf8b1/nfts",
       {
-        templateId: "5ed98848-5e77-4609-bc31-07b10e4b4d79",
-        recipient: `base:${walletAddress}`,
+        templateId: "ece07f4b-dbc7-4a9e-a521-b80274d38434",
+        recipient: `arbitrum:${walletAddress}`,
       },
       {
         headers: {
@@ -51,9 +73,16 @@ app.post("/mint/:walletAddress", async (req, res) => {
       }
     );
 
-    mintedWallets.add(walletAddress); 
+    if (response.status === 200) {
+      // Store the wallet address in Redis after successful mint
+      await redis.set(walletAddress, "true");
+      return res.status(200).json({ message: "NFT minted successfully!" });
+  } else {
+      const error = await response.data;
+      return res.status(response.status).json({ message: "Minting failed.", error });
+  }
 
-    res.status(200).json(response.data);
+    
   } catch (error) {
     console.error("Error minting NFT:", error.message);
     res.status(error.response?.status || 500).json({
