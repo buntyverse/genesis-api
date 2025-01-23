@@ -24,9 +24,18 @@ app.use((req, res, next) => {
   next();
 });
 
+
+const mintedWallets = new Set(); 
 // /mint endpoint
 app.post("/mint/:walletAddress", async (req, res) => {
   const { walletAddress } = req.params;
+
+  if (mintedWallets.has(walletAddress)) {
+    return res
+      .status(400)
+      .json({ error: "This wallet has already minted the NFT." });
+  }
+
 
   try {
     const response = await axios.post(
@@ -41,6 +50,8 @@ app.post("/mint/:walletAddress", async (req, res) => {
         },
       }
     );
+
+    mintedWallets.add(walletAddress); 
 
     res.status(200).json(response.data);
   } catch (error) {
