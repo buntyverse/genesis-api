@@ -87,7 +87,7 @@ app.post("/mint/:walletAddress/:starAddress", async (req, res) => {
 
     if (response.status === 200) {
       // Store the wallet address in Redis after successful mint
-      await redis.set(walletAddress, "true");
+      await redis.set(starAddress, "true");
       return res.status(200).json({ message: "NFT minted successfully!" });
   } else {
       const error = await response.data;
@@ -107,7 +107,7 @@ app.post("/mint/:walletAddress/:starAddress", async (req, res) => {
 app.get("/bar", async (req, res) => {
   try {
     const response = await axios.get(
-      "https://www.crossmint.com/api/2022-06-09/collections/b2f34c67-c1b4-4d15-b9f0-db736b7bf36e/templates/5ed98848-5e77-4609-bc31-07b10e4b4d79",
+      "https://www.crossmint.com/api/2022-06-09/collections/b2f34c67-c1b4-4d15-b9f0-db736b7bf36e/templates/ec6623bf-11cf-4c23-992c-4c97ab345b4a",
       {
         headers: {
           "x-api-key": process.env.CROSSMINT_API_KEY,
