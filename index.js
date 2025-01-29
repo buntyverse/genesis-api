@@ -13,7 +13,7 @@ const app = express();
 // Enable CORS for all origins
 
 const corsOptions = {
-  origin: "http://localhost:3000", // Change this to your frontend URL in production
+  origin: "*", // Change this to your frontend URL in production
   methods: "GET,POST,PUT,DELETE,OPTIONS",
   allowedHeaders: "Content-Type, Authorization, x-client-api-key",
 };
@@ -59,7 +59,9 @@ app.use((req, res, next) => {
 const mintedWallets = new Set(); 
 // /mint endpoint
 app.post("/mint/:walletAddress/:starAddress", async (req, res) => {
-  const { walletAddress } = req.params;
+  const  walletAddress = req.params.walletAddress;
+  const  starAddress  = req.params.starAddress;
+
   
 
   const isMinted = await redis.get(starAddress);
