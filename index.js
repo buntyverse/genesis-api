@@ -48,11 +48,11 @@ app.use((req, res, next) => {
 
 const mintedWallets = new Set(); 
 // /mint endpoint
-app.post("/mint/:walletAddress", async (req, res) => {
+app.post("/mint/:walletAddress/:starAddress", async (req, res) => {
   const { walletAddress } = req.params;
   
 
-  const isMinted = await redis.get(walletAddress);
+  const isMinted = await redis.get(starAddress);
   console.log(isMinted)
   if (isMinted) {
       return res.status(400).json({ message: "This wallet has already minted an NFT." });
