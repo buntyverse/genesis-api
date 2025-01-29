@@ -11,7 +11,15 @@ require("dotenv").config();
 const app = express();
 
 // Enable CORS for all origins
-app.use(cors());
+
+const corsOptions = {
+  origin: "*", // Change to frontend domain in production
+  methods: "GET,POST,PUT,DELETE,OPTIONS",
+  allowedHeaders: "Content-Type,Authorization",
+};
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
+
 
 
 app.use(express.json());
