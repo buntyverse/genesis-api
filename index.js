@@ -73,10 +73,10 @@ app.post("/mint/:walletAddress/:starAddress", async (req, res) => {
 
   try {
     const response = await axios.post(
-      "https://www.crossmint.com/api/2022-06-09/collections/126abb71-f84e-44e8-b49e-2972ed3cf8b1/nfts",
+      "https://www.crossmint.com/api/2022-06-09/collections/b2f34c67-c1b4-4d15-b9f0-db736b7bf36e/nfts",
       {
-        templateId: "ece07f4b-dbc7-4a9e-a521-b80274d38434",
-        recipient: `arbitrum:${walletAddress}`,
+        templateId: "ec6623bf-11cf-4c23-992c-4c97ab345b4a",
+        recipient: `base:${walletAddress}`,
       },
       {
         headers: {
